@@ -71,6 +71,10 @@ if (result === false) {
 // List of all ids into the collection
 users.indexes.map((id) => console.log(id))
 
+// Convert Map to Array
+users.records().map((user) => console.log(user))
+// => Array of users
+
 // Remove data
 users.trash(updatedJohn.id)
 

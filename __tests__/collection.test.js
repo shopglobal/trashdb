@@ -84,3 +84,11 @@ test('paging', () => {
         total: 30
     })
 })
+
+test('records', () => {
+    col.insert({ name: 'A' })
+    col.insert({ name: 'B' })
+    col.insert({ name: 'C' })
+
+    expect(col.records()).toHaveLength(3)
+})

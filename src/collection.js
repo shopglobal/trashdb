@@ -122,6 +122,14 @@ export default class TrashCollectionDb {
     }
 
     /**
+     * Return array of all records from the collection
+     * @return {Array}
+     */
+    records() {
+        return [...this.collection.values()]
+    }
+
+    /**
      * Return the number of records inside the collection
      * @return {Number}
      */
