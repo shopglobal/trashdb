@@ -30,9 +30,6 @@ test('fetch', () => {
     expect(pdoc).toEqual(ndoc)
 })
 
-/*
- * Issue we change the reference of the object
- */
 test('update', () => {
     // Insert 
     const doc = col.insert(newDoc)
