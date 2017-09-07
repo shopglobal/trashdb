@@ -1,6 +1,6 @@
 {
   "name": "trashdb",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Small document database",
   "main": "lib/index.js",
   "scripts": {
@@ -15,7 +15,9 @@
     ]
   },
   "jest": {
-    "transform": {".*": "./node_modules/babel-jest"}
+    "transform": {
+      ".*": "./node_modules/babel-jest"
+    }
   },
   "author": "Bozhidar Dryanovski <bozhidar.dryanovski@gmail.com>",
   "license": "ISC",
