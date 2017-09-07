@@ -1,3 +1,5 @@
+'use strict'
+
 import Sha1 from './sha1'
 
 const TOKEN = 37;
@@ -20,7 +22,7 @@ export default class TrashCollectionDb {
      * @return {Object}
      */
     toObject(d) {
-        return Array.from(d)[0][1]
+        return Object.assign({}, Array.from(d)[0][1]);
     }
 
     /**
@@ -43,28 +45,35 @@ export default class TrashCollectionDb {
     /**
      * Fetch data by Id from the colletion MapObject 
      * @param {CollectionId} id 
-     * @return {Map}
+     * @return {Object}
      */
     fetch(id) {
-        return this.collection.get(id)
+        return Object.assign({}, this.collection.get(id))
     }
 
     /**
-     * Insert data into collection by passing Single object or Array of objects 
-     * @param {Array|Object} data 
-     * @param {Boolean} bulk 
-     * @return {Map|[Map]}
+     * Single record insert  
+     * @param {Any} data 
+     * @return {Any}
      * 
      */
-    insert(data, bulk = false) {
-        if (!bulk) {
-            data = [data]
-        }
-        const inserts = data.map((row) => {
-            const document = newDocument(row)
-            return this.collection.set(document.id, document)
+    insert(data) {
+        const document = newDocument(data)
+        this.collection.set(document.id, document)
+        return this.collection.get(document.id)
+    }
+
+    /**
+     * Insert multiple records into the colletion 
+     * @param {Array} data 
+     * @return {Array}
+     */
+    bulkInsert(data) {
+        return data.map((row) => {
+            const document = newDocument(row);
+            this.collection.set(document.id, document)
+            return this.collection.get(document.id);
         })
-        return inserts.length === 1 ? inserts[0] : inserts
     }
 
     /**
@@ -72,14 +81,16 @@ export default class TrashCollectionDb {
      * @NOTE you must pass the how object or you may lose some of the data into the process 
      * @param {CollectionId} id 
      * @param {Object} data 
-     * @return {Map|Boolean}
+     * @return {Object|Boolean}
      */
     update(id, data) {
         let document = this.fetch(id);
+        const updateAt = new Date().getTime();
         if (document) {
             document = Object.assign({}, document, data);
-            document.metadata.updated_at = new Date().valueOf() + 10 
-            return this.collection.set(document.id, document)
+            document.metadata.updated_at = updateAt; 
+            this.collection.set(document.id, document)
+            return this.collection.get(document.id)
         }
         return false
     }
@@ -87,6 +98,7 @@ export default class TrashCollectionDb {
     /**
      * Remove record by `ID` from collection 
      * @param {CollectionId} id 
+     * @return {Boolean}
      */
     trash(id) {
         return this.collection.delete(id)
@@ -94,6 +106,7 @@ export default class TrashCollectionDb {
 
     /**
      * Truncate the collection
+     * @return {Boolean}
      */
     trashAll() {
         return this.collection.clear()
@@ -102,10 +115,10 @@ export default class TrashCollectionDb {
     /**
      * Return Iterator to iterate from all the `CollectionId`s inserted into 
      * the collection 
-     * @return {Iterator[CollectionId]}
+     * @return {Array}
      */
     indexes() {
-        return this.collection.keys();
+        return [...this.collection.keys()];
     }
 
     /**
@@ -136,6 +149,12 @@ export default class TrashCollectionDb {
     }
 }
 
+/**
+ * Create record entity by generating ID and metadata 
+ * 
+ * @param {Any} document 
+ * @return {Object}
+ */
 function newDocument(document) {
     const time = new Date().valueOf();
     return {
@@ -148,6 +167,10 @@ function newDocument(document) {
     }
 }
 
+/*
+ * Generate experimental ID to be use az UUID
+ * @NOTE: not in use
+ */
 function experimentalId() {
     return ((+new Date) + Math.random()* 100).toString(32)
 }

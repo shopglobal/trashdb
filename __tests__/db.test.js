@@ -25,7 +25,7 @@ test('list collections', () => {
 
 test('access the same collection every time', () => {
     const db = new TrashDb();
-    const john = db.collection('users').toObject(db.collection('users').insert({ username: 'John' }))
+    const john = db.collection('users').insert({ username: 'John' })
     const john2 = db.collection('users').fetch(john.id)
     expect(john).toEqual(john2)
 })

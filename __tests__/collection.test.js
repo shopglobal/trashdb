@@ -15,45 +15,54 @@ afterAll(() => {
 test('insert', () => {
     expect(col.size()).toBe(0)
     const doc = col.insert(newDoc)
-    expect(doc).toBeInstanceOf(Map)
     expect(col.lastId()).toBeDefined()
     expect(col.size()).toBe(1)
 })
 
 test('insert bulk', () => {
-    col.insert([ newDoc, newDoc ], true)
-    setTimeout(() => {
-        expect(col.size()).toBe(2)
-    },0)
+    col.bulkInsert([ newDoc, newDoc ])
+    expect(col.size()).toBe(2)
 })
 
 test('fetch', () => {
-    const pdoc = col.toObject(col.insert(newDoc))
+    const pdoc = col.insert(newDoc)
     const ndoc = col.fetch(pdoc.id) 
     expect(pdoc).toEqual(ndoc)
 })
 
 /*
+ * Issue we change the reference of the object
+ */
+/*
 test('update', () => {
-    const doc = col.toObject(col.insert(newDoc))
-    const doc2 = col.toObject(col.update(doc.id, doc))
+    // Insert 
+    const doc = col.insert(newDoc)
+    // Modify 
+    doc.data.username = 'unknown'
+    // Update 
+    const doc2 = col.update(doc.id, doc)
+    // Check
+    console.log(doc)
+    console.log(doc2)
+    expect(doc.data.username).not.toBe(doc2.data.username);
     expect(doc2.metadata.updated_at).not.toBe(doc.metadata.updated_at)
-})*/
+})
+*/
 
 test('has id', () => {
-    const doc = col.toObject(col.insert(newDoc))
+    const doc = col.insert(newDoc)
     expect(col.exist(doc.id)).toBeTruthy()
     expect(col.exist('not-existing')).toBeFalsy()
 })
 
 test('remove id', () => {
-    const doc = col.toObject(col.insert(newDoc))
+    const doc = col.insert(newDoc)
     col.trash(doc.id)
     expect(col.exist(doc.id)).toBeFalsy();
 })
 
 test('paging', () => {
-    col.insert((new Array(30).fill('UserObject')), true)
+    col.bulkInsert((new Array(30).fill('UserObject')))
     
     /* First page */
     const page1 = col.paging(1,10);
