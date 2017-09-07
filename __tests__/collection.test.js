@@ -33,21 +33,14 @@ test('fetch', () => {
 /*
  * Issue we change the reference of the object
  */
-/*
 test('update', () => {
     // Insert 
     const doc = col.insert(newDoc)
-    // Modify 
-    doc.data.username = 'unknown'
     // Update 
-    const doc2 = col.update(doc.id, doc)
-    // Check
-    console.log(doc)
-    console.log(doc2)
-    expect(doc.data.username).not.toBe(doc2.data.username);
-    expect(doc2.metadata.updated_at).not.toBe(doc.metadata.updated_at)
+    const doc2 = col.update(doc.id, Object.assign({}, doc, { data: { username: 'unknown' }}))
+    expect(doc2.data.username).toBe('unknown')
+    expect(doc.metadata.updated_at).not.toBe(doc2.metadata.updated_at)
 })
-*/
 
 test('has id', () => {
     const doc = col.insert(newDoc)

@@ -30,7 +30,7 @@ export default class TrashCollectionDb {
      * @return {CollectionID}
      */
     lastId() {
-        return [...this.collection.keys()][this.collection.size]
+        return [...this.collection.keys()][this.collection.size - 1]
     }
 
     /**
@@ -60,7 +60,7 @@ export default class TrashCollectionDb {
     insert(data) {
         const document = newDocument(data)
         this.collection.set(document.id, document)
-        return this.collection.get(document.id)
+        return this.fetch(document.id)
     }
 
     /**
@@ -72,7 +72,7 @@ export default class TrashCollectionDb {
         return data.map((row) => {
             const document = newDocument(row);
             this.collection.set(document.id, document)
-            return this.collection.get(document.id);
+            return this.fetch(document.id);
         })
     }
 
@@ -86,11 +86,25 @@ export default class TrashCollectionDb {
     update(id, data) {
         let document = this.fetch(id);
         if (document) {
-            const updateAt = new Date().getTime();
-            document = Object.assign({}, document, data);
-            document.metadata.updated_at = updateAt; 
-            this.collection.set(document.id, document)
-            return this.collection.get(document.id)
+            const updateAt = new Date().getTime() + 1;
+            const updated_document = Object.assign(
+                // Base object
+                {}, 
+                // Old version of the document
+                document, 
+                // Updated version of the document
+                data,
+                // Updated metadata
+                {
+                    metadata: { 
+                        created_at: document.metadata.created_at,
+                        updated_at: updateAt 
+                    }
+                }
+            );
+
+            this.collection.set(document.id, updated_document)
+            return this.fetch(document.id)
         }
         return false
     }
@@ -169,7 +183,7 @@ function newDocument(document) {
         id: Sha1.hash(time * TOKEN + (Math.random() * 100)),
         data: document,
         metadata: {
-            create_at: time,
+            created_at: time,
             updated_at: time
         }
     }
