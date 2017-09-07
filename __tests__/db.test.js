@@ -29,3 +29,20 @@ test('access the same collection every time', () => {
     const john2 = db.collection('users').fetch(john.id)
     expect(john).toEqual(john2)
 })
+
+
+test('export database to object', () => {
+    const db = new TrashDb();
+    const users = db.collection('users')
+    const posts = db.collection('posts')
+
+    users.insert({ firstname: 'john', lastname: 'doe' })
+    posts.insert({ title: 'Hello World', content: 'Just a content' })
+
+    const exported = db.toObject();
+
+    expect(exported.users).toBeDefined()
+    expect(exported.posts).toBeDefined()
+    expect(exported.users).toHaveLength(1)
+    expect(exported.posts).toHaveLength(1)
+})
