@@ -85,8 +85,8 @@ export default class TrashCollectionDb {
      */
     update(id, data) {
         let document = this.fetch(id);
-        const updateAt = new Date().getTime();
         if (document) {
+            const updateAt = new Date().getTime();
             document = Object.assign({}, document, data);
             document.metadata.updated_at = updateAt; 
             this.collection.set(document.id, document)
