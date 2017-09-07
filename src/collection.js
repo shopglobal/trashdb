@@ -13,7 +13,6 @@ export default class TrashCollectionDb {
     constructor(name) {
         this.collection_name = name;
         this.collection = new Map();
-        this.lastInsertedId = undefined;
     }
 
     /**
