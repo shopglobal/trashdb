@@ -2,7 +2,7 @@
   "name": "trashdb",
   "version": "1.0.0",
   "description": "Small document database",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "jest",
     "dev": "jest --watchAll",

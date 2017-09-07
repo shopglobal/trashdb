@@ -42,7 +42,14 @@ users.size()
 
 const john = users.fetch(johnId);
 
-// => { id: 'xxxxx', data: { firstname: 'John', email: 'john@email.com' }, metadata: { created_at: <timestamp>, updated_at: <timestamp> } }
+// => { 
+//      id: 'xxxxx', 
+//      data: { firstname: 'John', email: 'john@email.com' }, 
+//      metadata: { 
+//          created_at: <timestamp>, 
+//          updated_at: <timestamp> 
+//      } 
+//    }
 
 // Update data from collection
 
