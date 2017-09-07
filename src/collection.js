@@ -30,7 +30,7 @@ export default class TrashCollectionDb {
      * @return {CollectionID}
      */
     lastId() {
-        return Array.from(this.collection.keys())[0][this.collection.size]
+        return [...this.collection.keys()][this.collection.size]
     }
 
     /**
