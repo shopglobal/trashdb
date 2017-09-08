@@ -1,8 +1,28 @@
+// @flow
+
 'use strict'
 
 import Sha1 from './sha1'
 
 const TOKEN = 37;
+
+type CollectionDocument = {
+    id: string,
+    data: any,
+    metadata: {
+        created_at: number,
+        updated_at: number
+    }
+}
+
+type CollectionPaging = {
+    page: number,
+    pages: number, 
+    limit: number,
+    total: number,
+    records: Array<mixed> 
+}
+
 /**
  * Create new collection instance 
  * 
@@ -10,7 +30,9 @@ const TOKEN = 37;
  * @param {String} name collection name
  */
 export default class TrashCollectionDb {
-    constructor(name) {
+    collection_name: string;
+    collection: Map<any,any>;
+    constructor(name: string) {
         this.collection_name = name;
         this.collection = new Map();
     }
@@ -20,7 +42,7 @@ export default class TrashCollectionDb {
      * @param {Map} d 
      * @return {Object}
      */
-    toObject(d) {
+    toObject(d: any) {
         return Object.assign({}, Array.from(d)[0][1]);
     }
 
@@ -28,7 +50,8 @@ export default class TrashCollectionDb {
      * Fetch last inserted id into the collection
      * @return {CollectionID}
      */
-    lastId() {
+    lastId(): string {
+        // $FlowFixMe
         return [...this.collection.keys()][this.collection.size - 1]
     }
 
@@ -37,16 +60,16 @@ export default class TrashCollectionDb {
      * @param {CollectionId} id 
      * @return {Boolean}
      */
-    exist(id) {
+    exist(id: string): boolean {
         return this.collection.has(id)
     }
 
     /**
      * Fetch data by Id from the colletion MapObject 
      * @param {CollectionId} id 
-     * @return {Object}
+     * @return {CollectionDocument}
      */
-    fetch(id) {
+    fetch(id: string): CollectionDocument {
         return Object.assign({}, this.collection.get(id))
     }
 
@@ -56,7 +79,7 @@ export default class TrashCollectionDb {
      * @return {Any}
      * 
      */
-    insert(data) {
+    insert(data: any): CollectionDocument {
         const document = newDocument(data)
         this.collection.set(document.id, document)
         return this.fetch(document.id)
@@ -67,7 +90,7 @@ export default class TrashCollectionDb {
      * @param {Array} data 
      * @return {Array}
      */
-    bulkInsert(data) {
+    bulkInsert(data: Array<mixed>): Array<CollectionDocument> {
         return data.map((row) => {
             const document = newDocument(row);
             this.collection.set(document.id, document)
@@ -80,9 +103,9 @@ export default class TrashCollectionDb {
      * @NOTE you must pass the how object or you may lose some of the data into the process 
      * @param {CollectionId} id 
      * @param {Object} data 
-     * @return {Object|Boolean}
+     * @return {CollectionDocument}
      */
-    update(id, data) {
+    update(id: string, data: any): CollectionDocument {
         let document = this.fetch(id);
         if (document) {
             const updateAt = new Date().getTime() + 1;
@@ -105,7 +128,7 @@ export default class TrashCollectionDb {
             this.collection.set(document.id, updated_document)
             return this.fetch(document.id)
         }
-        return false
+        return document;
     }
 
     /**
@@ -113,7 +136,7 @@ export default class TrashCollectionDb {
      * @param {CollectionId} id 
      * @return {Boolean}
      */
-    trash(id) {
+    trash(id: string): boolean {
         return this.collection.delete(id)
     }
 
@@ -130,7 +153,8 @@ export default class TrashCollectionDb {
      * the collection 
      * @return {Array}
      */
-    indexes() {
+    indexes(): Array<string> {
+        // $FlowFixMe
         return [...this.collection.keys()];
     }
 
@@ -138,7 +162,8 @@ export default class TrashCollectionDb {
      * Return array of all records from the collection
      * @return {Array}
      */
-    records() {
+    records(): Array<CollectionDocument> {
+        // $FlowFixMe
         return [...this.collection.values()]
     }
 
@@ -146,7 +171,7 @@ export default class TrashCollectionDb {
      * Return the number of records inside the collection
      * @return {Number}
      */
-    size() {
+    size(): number {
         return this.collection.size
     }
 
@@ -155,7 +180,7 @@ export default class TrashCollectionDb {
      * @param {Object} options 
      * @param {Number} options.pageSize
      */
-    paging(pageNumber, pageSize) {
+    paging(pageNumber: number, pageSize: number): CollectionPaging {
         const records = Array.from(this.collection.values());
         const offset = (pageNumber - 1) * pageSize;
         const total = records.length; 
@@ -188,7 +213,7 @@ function newDocument(document) {
     }
 }
 
-/*
+/**
  * Generate experimental ID to be use az UUID
  * @NOTE: not in use
  */
