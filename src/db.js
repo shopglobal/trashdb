@@ -1,3 +1,5 @@
+// @flow
+
 'use strict'
 
 import TrashCollectionDb from './collection'
@@ -8,7 +10,8 @@ import TrashCollectionDb from './collection'
  * @params {Object} props
  */
 export default class TrashDb {
-    constructor(prop = {}) {
+    db: Object
+    constructor(prop: Object = {}) {
         this.db = {}
     }
 
@@ -17,7 +20,7 @@ export default class TrashDb {
      *  
      * @param {String} name 
      */
-    collection(name) {
+    collection(name: string): Object {
         if (!this.db[name]) {
             this.db[name] = new TrashCollectionDb(name)
         } 
@@ -29,7 +32,7 @@ export default class TrashDb {
      * All created or accessed collections
      * @return {Array}
      */
-    collections() {
+    collections(): Array<string> {
         return Object.keys(this.db)
     }
 
@@ -44,7 +47,7 @@ export default class TrashDb {
      * 
      * @return {Object}
      */
-    toObject() {
+    toObject(): Object {
         let result = {};
         Object.keys(this.db).map((collection) => {
             result[collection] = this.db[collection].records();
