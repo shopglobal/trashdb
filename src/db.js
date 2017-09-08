@@ -4,6 +4,14 @@
 
 import TrashCollectionDb from './collection'
 
+type TrashDbStorage = {
+    [key: string]: TrashCollectionDb
+}
+
+type TrashDbExport = {
+    [key: string]: Array<mixed>
+}
+
 /**
  * Create single instance of TrashDb 
  * @class TrashDb
@@ -20,7 +28,7 @@ export default class TrashDb {
      *  
      * @param {String} name 
      */
-    collection(name: string): Object {
+    collection(name: string): TrashDbStorage {
         if (!this.db[name]) {
             this.db[name] = new TrashCollectionDb(name)
         } 
@@ -47,7 +55,7 @@ export default class TrashDb {
      * 
      * @return {Object}
      */
-    toObject(): Object {
+    toObject(): TrashDbExport {
         let result = {};
         Object.keys(this.db).map((collection) => {
             result[collection] = this.db[collection].records();
