@@ -6,8 +6,9 @@
   "scripts": {
     "test": "jest",
     "dev": "jest --watchAll",
+    "flow": "flow",
     "compile": "node_modules/babel-cli/bin/babel.js src --out-dir lib",
-    "prepublish": "npm run compile"
+    "prepublish": "npm run flow; npm run test; npm run compile"
   },
   "babel": {
     "presets": [

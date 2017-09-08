@@ -2,26 +2,11 @@
 
 'use strict'
 
+import type { CollectionDocument, CollectionPaging, CollectionId } from './flow/TrashDbTypes'
+
 import Sha1 from './sha1'
 
 const TOKEN = 37;
-
-type CollectionDocument = {
-    id: string,
-    data: any,
-    metadata: {
-        created_at: number,
-        updated_at: number
-    }
-}
-
-type CollectionPaging = {
-    page: number,
-    pages: number, 
-    limit: number,
-    total: number,
-    records: Array<mixed> 
-}
 
 /**
  * Create new collection instance 
@@ -42,7 +27,7 @@ export default class TrashCollectionDb {
      * @param {Map} d 
      * @return {Object}
      */
-    toObject(d: any) {
+    toObject(d: any): Object {
         return Object.assign({}, Array.from(d)[0][1]);
     }
 
@@ -50,7 +35,7 @@ export default class TrashCollectionDb {
      * Fetch last inserted id into the collection
      * @return {CollectionID}
      */
-    lastId(): string {
+    lastId(): CollectionId {
         // $FlowFixMe
         return [...this.collection.keys()][this.collection.size - 1]
     }
@@ -60,7 +45,7 @@ export default class TrashCollectionDb {
      * @param {CollectionId} id 
      * @return {Boolean}
      */
-    exist(id: string): boolean {
+    exist(id: CollectionId): boolean {
         return this.collection.has(id)
     }
 
@@ -69,7 +54,7 @@ export default class TrashCollectionDb {
      * @param {CollectionId} id 
      * @return {CollectionDocument}
      */
-    fetch(id: string): CollectionDocument {
+    fetch(id: CollectionId): CollectionDocument {
         return Object.assign({}, this.collection.get(id))
     }
 
@@ -105,7 +90,7 @@ export default class TrashCollectionDb {
      * @param {Object} data 
      * @return {CollectionDocument}
      */
-    update(id: string, data: any): CollectionDocument {
+    update(id: CollectionId, data: CollectionDocument): CollectionDocument {
         let document = this.fetch(id);
         if (document) {
             const updateAt = new Date().getTime() + 1;
@@ -136,16 +121,16 @@ export default class TrashCollectionDb {
      * @param {CollectionId} id 
      * @return {Boolean}
      */
-    trash(id: string): boolean {
+    trash(id: CollectionId): boolean {
         return this.collection.delete(id)
     }
 
     /**
      * Truncate the collection
-     * @return {Boolean}
+     * @return {Void}
      */
-    trashAll() {
-        return this.collection.clear()
+    trashAll(): void {
+        this.collection.clear();
     }
 
     /**
@@ -153,7 +138,7 @@ export default class TrashCollectionDb {
      * the collection 
      * @return {Array}
      */
-    indexes(): Array<string> {
+    indexes(): Array<CollectionId> {
         // $FlowFixMe
         return [...this.collection.keys()];
     }
@@ -201,7 +186,7 @@ export default class TrashCollectionDb {
  * @param {Any} document 
  * @return {Object}
  */
-function newDocument(document) {
+function newDocument(document: any): CollectionDocument {
     const time = new Date().valueOf();
     return {
         id: Sha1.hash(time * TOKEN + (Math.random() * 100)),
@@ -217,6 +202,6 @@ function newDocument(document) {
  * Generate experimental ID to be use az UUID
  * @NOTE: not in use
  */
-function experimentalId() {
+function experimentalId(): string {
     return ((+new Date) + Math.random()* 100).toString(32)
 }

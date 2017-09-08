@@ -3,14 +3,7 @@
 'use strict'
 
 import TrashCollectionDb from './collection'
-
-type TrashDbStorage = {
-    [key: string]: TrashCollectionDb
-}
-
-type TrashDbExport = {
-    [key: string]: Array<mixed>
-}
+import type { TrashDbExport, TrashDbStorage } from './flow/TrashDbTypes'
 
 /**
  * Create single instance of TrashDb 
